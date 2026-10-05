@@ -55,11 +55,12 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-                List.of(
-                        "http://localhost:5173",
-                        "https://job-connect-erv1.vercel.app"
-                )
-        );
+        List.of(
+                "http://localhost:5173",
+                "https://job-connect-erv1.vercel.app",
+                "https://job-connect-six-sigma.vercel.app"
+        )
+);
 
         configuration.setAllowedMethods(
                 List.of(
