@@ -1,8 +1,6 @@
 package com.jobconnect.config;
 
-import com.jobconnect.repository.UserRepository;
-import com.jobconnect.security.JwtAuthenticationFilter;
-import com.jobconnect.security.JwtService;
+import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,12 +12,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import com.jobconnect.repository.UserRepository;
+import com.jobconnect.security.JwtAuthenticationFilter;
+import com.jobconnect.security.JwtService;
 
 @Configuration
 public class SecurityConfig {
@@ -33,21 +32,18 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
     // =========================
     // USER DETAILS SERVICE
     // =========================
 
     @Bean
     public UserDetailsService userDetailsService() {
-
         return username -> {
             throw new UsernameNotFoundException(
                     "Default Spring Security user is not used"
             );
         };
     }
-
 
     // =========================
     // CORS CONFIGURATION
@@ -56,12 +52,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration configuration =
-                new CorsConfiguration();
+        CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
                 List.of(
-                        "http://localhost:5173"
+                        "http://localhost:5173",
+                        "https://job-connect-erv1.vercel.app"
                 )
         );
 
@@ -92,7 +88,6 @@ public class SecurityConfig {
         return source;
     }
 
-
     // =========================
     // SECURITY FILTER CHAIN
     // =========================
@@ -104,38 +99,17 @@ public class SecurityConfig {
     ) throws Exception {
 
         http
-
-                // =========================
                 // CORS
-                // =========================
-
                 .cors(cors -> {})
 
-
-                // =========================
                 // CSRF
-                // =========================
-
                 .csrf(csrf -> csrf.disable())
 
+                // Disable Form Login
+                .formLogin(form -> form.disable())
 
-                // =========================
-                // FORM LOGIN
-                // =========================
-
-                .formLogin(
-                        form -> form.disable()
-                )
-
-
-                // =========================
-                // HTTP BASIC
-                // =========================
-
-                .httpBasic(
-                        httpBasic -> httpBasic.disable()
-                )
-
+                // Disable HTTP Basic
+                .httpBasic(httpBasic -> httpBasic.disable())
 
                 // =========================
                 // AUTHORIZATION
@@ -143,72 +117,49 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // -------------------------
-                        // AUTH
-                        // -------------------------
-
+                        // Authentication
                         .requestMatchers(
                                 "/api/auth/register",
                                 "/api/auth/login"
                         )
                         .permitAll()
 
-
-                        // -------------------------
-                        // RECRUITER - MY JOBS
-                        // -------------------------
-
+                        // Recruiter - My Jobs
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/jobs/recruiter/my-jobs"
                         )
                         .hasRole("RECRUITER")
 
-
-                        // -------------------------
-                        // RESUME - UPLOAD
-                        // -------------------------
-
+                        // Resume Upload
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/resume/upload/**"
                         )
                         .hasRole("JOB_SEEKER")
 
-
-                        // -------------------------
-                        // RESUME - DOWNLOAD
-                        // -------------------------
-
+                        // Resume Download
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/resume/download/**"
                         )
                         .hasRole("RECRUITER")
 
-
-                        // -------------------------
-                        // JOB SEEKER - MY PROFILE
-                        // -------------------------
-
+                        // Job Seeker Profile - GET
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/users/profile"
                         )
                         .hasAuthority("ROLE_JOB_SEEKER")
 
-
+                        // Job Seeker Profile - UPDATE
                         .requestMatchers(
                                 HttpMethod.PUT,
                                 "/api/users/profile"
                         )
                         .hasAuthority("ROLE_JOB_SEEKER")
 
-
-                        // -------------------------
-                        // JOBS - GET
-                        // -------------------------
-
+                        // Jobs - GET
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/jobs/**"
@@ -218,117 +169,75 @@ public class SecurityConfig {
                                 "RECRUITER"
                         )
 
-
-                        // -------------------------
-                        // JOBS - CREATE
-                        // -------------------------
-
+                        // Jobs - CREATE
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/jobs/**"
                         )
                         .hasRole("RECRUITER")
 
-
-                        // -------------------------
-                        // RECRUITER - USER DETAILS
-                        // -------------------------
-
+                        // Recruiter - User Details
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/users/**"
                         )
                         .hasRole("RECRUITER")
 
-
-                        // -------------------------
-                        // JOBS - UPDATE
-                        // -------------------------
-
+                        // Jobs - UPDATE
                         .requestMatchers(
                                 HttpMethod.PUT,
                                 "/api/jobs/**"
                         )
                         .hasRole("RECRUITER")
 
-
-                        // -------------------------
-                        // JOBS - DELETE
-                        // -------------------------
-
+                        // Jobs - DELETE
                         .requestMatchers(
                                 HttpMethod.DELETE,
                                 "/api/jobs/**"
                         )
                         .hasRole("RECRUITER")
 
-
-                        // -------------------------
-                        // APPLICATION - APPLY
-                        // -------------------------
-
+                        // Application - APPLY
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/applications/**"
                         )
                         .hasRole("JOB_SEEKER")
 
-
-                        // -------------------------
-                        // APPLICATIONS - USER
-                        // -------------------------
-
+                        // Applications - User
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/applications/user/**"
                         )
                         .hasRole("JOB_SEEKER")
 
-
-                        // -------------------------
-                        // APPLICATIONS - JOB
-                        // -------------------------
-
+                        // Applications - Job
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/applications/job/**"
                         )
                         .hasRole("RECRUITER")
 
-
-                        // -------------------------
-                        // APPLICATION STATUS
-                        // -------------------------
-
+                        // Application Status Update
                         .requestMatchers(
                                 HttpMethod.PUT,
                                 "/api/applications/**"
                         )
                         .hasRole("RECRUITER")
 
-
-                        // -------------------------
-                        // EVERYTHING ELSE
-                        // -------------------------
-
+                        // Everything Else
                         .anyRequest()
                         .authenticated()
                 )
 
-
-                // =========================
-                // JWT FILTER
-                // =========================
-
+                // JWT Authentication Filter
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
                 );
 
-
         return http.build();
     }
-
 
     // =========================
     // JWT AUTHENTICATION FILTER
