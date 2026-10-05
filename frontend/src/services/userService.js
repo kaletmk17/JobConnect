@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api/users'
+const API_URL = `${import.meta.env.VITE_API_URL}/api/users`
 
 export const getUserById = async (userId) => {
 

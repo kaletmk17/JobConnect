@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
 function Resume() {
 
   const [file, setFile] = useState(null)
@@ -61,7 +63,7 @@ function Resume() {
       formData.append('file', file)
 
       const response = await fetch(
-        'http://localhost:8080/api/resume/upload',
+        `${API_BASE_URL}/api/resume/upload`,
         {
           method: 'POST',
           headers: {

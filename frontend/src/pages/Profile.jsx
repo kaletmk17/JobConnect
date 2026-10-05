@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
 function Profile() {
 
   // ==============================
@@ -56,7 +58,7 @@ function Profile() {
       try {
 
         const response = await fetch(
-          'http://localhost:8080/api/users/profile',
+          `${API_BASE_URL}/api/users/profile`,
           {
             method: 'GET',
             headers: {
@@ -151,7 +153,7 @@ function Profile() {
       try {
 
         const response = await fetch(
-          'http://localhost:8080/api/users/profile',
+          `${API_BASE_URL}/api/users/profile`,
           {
             method: 'PUT',
 
@@ -340,7 +342,7 @@ function Profile() {
 
         const response =
           await fetch(
-            'http://localhost:8080/api/resume/upload',
+            `${API_BASE_URL}/api/resume/upload`,
             {
               method: 'POST',
 

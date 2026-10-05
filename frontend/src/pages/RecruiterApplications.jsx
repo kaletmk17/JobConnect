@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
 import {
   getJobApplications,
   updateApplicationStatus
@@ -266,7 +268,7 @@ function RecruiterApplications() {
     try {
 
       const response = await fetch(
-        `http://localhost:8080/api/resume/download/application/${applicationId}`,
+        `${API_BASE_URL}/api/resume/download/application/${applicationId}`,
         {
           method: 'GET',
 
