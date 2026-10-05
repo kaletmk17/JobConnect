@@ -1142,7 +1142,7 @@ a {
     0 18px 40px rgba(37, 99, 235, 0.10);
 }
 
- {
+ .job-card h2 {
   margin-bottom: 16px;
 
   color: #0f172a;
